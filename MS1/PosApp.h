@@ -1,16 +1,14 @@
 #ifndef SDDS_POSAPP_H_
 #define SDDS_POSAPP_H_
 
-#include <iostream>
-
 const int MAX_LEN_FILENAME = 255;
 
 namespace sdds {
+
     class PosApp {
-        int noItems;
+        int noItems = 6;
 
     public:
-
         // IMPLEMENTED
         void menu();
         PosApp(char * filename);
