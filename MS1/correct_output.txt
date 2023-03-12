@@ -1,0 +1,66 @@
+>>>> Loading Items...........................................................
+Loading data from datafile.csv
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> abc
+Invalid Integer, try again: -1
+[0<=value<=5], retry: > 6
+[0<=value<=5], retry: > 1
+>>>> Listing Items...........................................................
+Running listItems()
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> 2
+>>>> Adding Item to the store................................................
+Running addItem()
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> 3
+>>>> Remove Item.............................................................
+Running removeItem()
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> 4
+>>>> Select an item to stock.................................................
+Running stockItem()
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> 5
+>>>> Starting Point of Sale..................................................
+Running POS()
+The Sene-Store
+1- List items
+2- Add item
+3- Remove item
+4- Stock item
+5- Point of Sale
+0- exit program
+> 0
+>>>> Saving Data.............................................................
+Saving data in datafile.csv
+Goodbye!
