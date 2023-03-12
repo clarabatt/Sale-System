@@ -7,6 +7,7 @@ const int MAX_LEN_FILENAME = 255;
 
 namespace sdds {
     class PosApp {
+        int noItems;
 
     public:
 
@@ -14,6 +15,10 @@ namespace sdds {
         void menu();
         PosApp(char * filename);
         void run();
+
+        // Deleting copy constructor and assignment operators
+        PosApp(const PosApp&) = delete;
+        PosApp& operator=(const PosApp&) = delete;
 
         // MOCK
         void addItem();
