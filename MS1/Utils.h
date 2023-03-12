@@ -5,6 +5,7 @@
 
 namespace sdds {
 
+    void flushkeys();
 
 }
 #endif // !SDDS_UTILS_H_
