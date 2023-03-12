@@ -6,7 +6,12 @@ using namespace std;
 
 namespace sdds {
 
-    void menu(){
+    PosApp::PosApp(char * filename){
+        if (filename[0] != '\0')
+            strcpy(this->filename, filename);
+    };
+
+    int PosApp::menu(){
 
         int choice = -1;
         bool firstLoop = true;
@@ -33,7 +38,29 @@ namespace sdds {
             firstLoop = false;
         }
 
+        return choice;
+
     }
+
+    void PosApp::run(){
+        int val = menu();
+
+        if (val == 1){
+            listItems();
+        } else if (val == 2) {
+            addItem();
+        } else if (val == 3) {
+            removeItem();
+        } else if (val == 4) {
+            stockItem();
+        } else if (val == 5) {
+            POS();
+        } else if (val == 0) {
+            cout << "Saving data in datafile.csv\n"
+                    "Goodbye!";
+        }
+
+    };
 
     void PosApp::addItem(){
         cout << "Running" << " addItem()" << endl;

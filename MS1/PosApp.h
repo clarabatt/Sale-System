@@ -6,11 +6,11 @@ const int MAX_LEN_FILENAME = 255;
 namespace sdds {
 
     class PosApp {
-        int noItems = 6;
+        char filename[MAX_LEN_FILENAME];
 
     public:
         // IMPLEMENTED
-        void menu();
+        int menu();
         PosApp(char * filename);
         void run();
 
