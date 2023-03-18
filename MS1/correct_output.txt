@@ -41,7 +41,7 @@ The Sene-Store
 5- Point of Sale
 0- exit program
 > 4
->>>> Select an item to stock.................................................
+>>>> Select an item to stock".................................................
 Running stockItem()
 The Sene-Store
 1- List items
