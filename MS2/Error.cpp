@@ -20,7 +20,6 @@ namespace sdds {
         if (copyError.error_message != nullptr and copyError.error_message[0] != '\0'){
             error_message = new char [strlen(copyError.error_message)+1];
             strcpy(error_message, copyError.error_message);
-            copyError.clear();
         }
     };
     Error::~Error(){
@@ -31,7 +30,6 @@ namespace sdds {
         if (copyError.error_message != nullptr and copyError.error_message[0] != '\0'){
             error_message = new char [strlen(copyError.error_message)+1];
             strcpy(error_message, copyError.error_message);
-            copyError.clear();
         }
         return *this;
     };
@@ -65,7 +63,9 @@ namespace sdds {
     };
 
     ostream& operator<<(ostream& ostr, const Error& right){
-        ostr << right.getMessage();
+        if (right) {
+            ostr << right.getMessage();
+        }
         return ostr;
     };
 
