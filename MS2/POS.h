@@ -13,14 +13,14 @@
 #define SDDS_POSAPP_H_
 
 const int MAX_LEN_FILENAME = 255;
-const TAX: 0.13
-const MAX_SKU_LEN: 7
+const double TAX = 0.13;
+const int MAX_SKU_LEN = 7;
 
-const MIN_YEAR: 2000
-const MAX_YEAR: 2030
+const int MIN_YEAR = 2000;
+const int MAX_YEAR = 2030;
 
-const MAX_STOCK_NUMBER: 99
-const MAX_NO_ITEMS: 2000
+const int MAX_STOCK_NUMBER = 99;
+const int MAX_NO_ITEMS = 2000;
 
 namespace sdds {
 
