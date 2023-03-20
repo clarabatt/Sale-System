@@ -31,19 +31,23 @@ namespace sdds {
         Date(int y, int m, int d, int h, int min = -1);
 
         Date& dateOnly(bool value);
+        void display(ostream& ostr) const;
+        char* getErrorMessage() const;
+        void clearError() const;
+
+        bool operator==(const Date& right) const;
+        bool operator!=(const Date& right) const;
+        bool operator<(const Date& right) const;
+        bool operator>(const Date& right) const;
+        bool operator<=(const Date& right) const;
+        bool operator>=(const Date& right) const;
+
+        operator bool() const;
+
 
     protected:
         void setDate(int y, int m, int d);
         void setTime(int h, int m);
-
-
-//        Date(Date& copyDate);
-//        ~Date();
-//        Date& operator=(Date& copyDate);
-//        operator bool() const;
-//        char* getMessage() const;
-//        Date& clear();
-//        Date& operator=(const char* msg);
 
     };
 

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <ctime>
 #include "Date.h"
-#include "Error.h"
-#include "POS.h"
 
 using namespace std;
 
@@ -50,11 +48,10 @@ namespace sdds {
             m_error = new Error('Invalid Month');
         } else if (d < 1 or d > daysOfMonth(y, m)){
             m_error = new Error('Invalid Day');
-        } else {
-            m_year = y;
-            m_month = m;
-            m_day = d;
         }
+        m_year = y;
+        m_month = m;
+        m_day = d;
     };
 
 
@@ -85,9 +82,71 @@ namespace sdds {
         return *this;
     };
 
-    istream& operator>>(istream& istr, const Date& left) {
+    void Date::display(ostream& ostr) const{
+        ostr << m_year << "/" << m_month << "/" << m_day;
+        if (!m_dateOnly)
+            ostr << ", " << m_hour << ":" << m_minute;
+        ostr << endl;
+    };
 
+    char* Date::getErrorMessage() const{
+        return m_error.getMessage();
+    };
+
+    void Date::clearError() const {
+        m_error.clear();
+    };
+
+    ostream& operator>>(ostream& ostr, const Date& left) {
+        if (left.getErrorMessage()) {
+            ostr << left.getErrorMessage() << "(";
+            left.display(ostr);
+            ostr << ")";
+        } else {
+            left.display(ostr);
+        }
+        return ostr;
+    };
+
+    istream& operator>>(istream& istr, const Date& left) {
+        left.clearError();
+        
         return istr;
+    };
+
+    bool Date::operator==(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(rightVal == leftVal);
+    };
+    bool Date::operator!=(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(rightVal != leftVal);
+    };
+    bool Date::operator<(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(leftVal < rightVal);
+    };
+    bool Date::operator>(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(leftVal > rightVal);
+    };
+    bool Date::operator<=(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(leftVal <= rightVal);
+    };
+    bool Date::operator>=(const Date& right) const{
+        int rightVal = uniqueDateValue(right.m_year, right.m_month, right.m_day, right.m_hour, right.m_minute);
+        int leftVal = uniqueDateValue(m_year, m_month, m_day, m_hour, m_minute);
+        return(leftVal >= rightVal);
+    };
+
+    Date::operator bool() const {
+        return !m_error;
     };
 
 }
