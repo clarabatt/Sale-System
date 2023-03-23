@@ -1,6 +1,8 @@
 #include <iostream>
 #include <ctime>
 #include "Date.h"
+#include "iomanip"
+#include <cstring>
 
 using namespace std;
 
@@ -32,34 +34,33 @@ namespace sdds {
     }
 
     Date::Date(){
-        m_year = 0;
-        m_month = 0;
-        m_day = 0;
-        m_hour = 0;
-        m_minute = 0;
+        getSystemDate(m_year, m_month, m_day, m_hour, m_minute, true);
         m_dateOnly = true;
-        m_error = new Error('Invalid Year');
     };
 
     void Date::setDate(int y, int m, int d) {
         if (y < MIN_YEAR or y > MAX_YEAR) {
-            m_error = new Error('Invalid Year');
+            m_error = "Invalid Year";
         } else if (m < 1 or m > 12){
-            m_error = new Error('Invalid Month');
+            m_error = "Invalid Month";
         } else if (d < 1 or d > daysOfMonth(y, m)){
-            m_error = new Error('Invalid Day');
+            m_error = "Invalid Day";
         }
         m_year = y;
         m_month = m;
         m_day = d;
     };
 
+    void Date::setError(char * str) {
+        m_error = str;
+    };
+
 
     void Date::setTime(int h, int m) {
         if (h < 0 or h > 23) {
-            m_error = new Error('Invalid Hour');
+            m_error = "Invalid Hour";
         } else if (m < 0 or m > 59){
-            m_error = new Error('Invalid Minute');
+            m_error = "Invalid Minute";
         }else {
             m_hour = h;
             m_minute = m;
@@ -74,7 +75,10 @@ namespace sdds {
     Date::Date(int y, int m, int d, int h, int min){
         setDate(y, m, d);
         setTime(h, min);
-        m_dateOnly = false;
+        if (h != 0 and min != 0)
+            m_dateOnly = false;
+        else
+            m_dateOnly = true;
     };
 
     Date& Date::dateOnly(bool value){
@@ -93,11 +97,12 @@ namespace sdds {
         return m_error.getMessage();
     };
 
-    void Date::clearError() const {
+    void Date::clearError() {
         m_error.clear();
     };
 
-    ostream& operator>>(ostream& ostr, const Date& left) {
+    ostream& operator<<(ostream& ostr, Date& left) {
+        left.clearError();
         if (left.getErrorMessage()) {
             ostr << left.getErrorMessage() << "(";
             left.display(ostr);
@@ -108,9 +113,43 @@ namespace sdds {
         return ostr;
     };
 
-    istream& operator>>(istream& istr, const Date& left) {
+    istream& operator>>(istream& istr, Date& left) {
         left.clearError();
-        
+        int y, m, d, h = 0, min = 0;
+
+        istr >> y;
+        if (istr.fail()) {
+            left.setError("Cannot read year entry");
+        }
+        istr.ignore();
+        istr >> m;
+        if (istr.fail()) {
+            left.setError("Cannot read month entry");
+        }
+        istr.ignore();
+        istr >> d;
+        if (istr.fail()) {
+            left.setError("Cannot read day entry");
+        }
+
+        if (cin.peek() != '\n') {
+            istr.ignore();
+            istr >> h;
+            if (istr.fail()) {
+                left.setError("Cannot read hour entry");
+            }
+            istr.ignore();
+            istr >> min;
+            if (istr.fail()) {
+                left.setError("Cannot read minute entry");
+            }
+        }
+        if (h == 0 and min == 0) left.dateOnly(true);
+        left.setDate(y, m, d);
+        left.setTime(h, min);
+
+//        cout << endl << y << m << d << h << min << endl;
+
         return istr;
     };
 
