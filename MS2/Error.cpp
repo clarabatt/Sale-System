@@ -1,3 +1,12 @@
+// *****************************************************************************
+// Author  : Clara Verena Brito Battesini
+// Student ID(s)#: 143430213
+// Email        : cverena-brito-battes@senecacollege.ca
+// 22/03/2023
+//
+// I have done all the coding by myself and only copied the code that my professor provided to complete my workshops and assignments.
+// *****************************************************************************
+
 #include <iostream>
 #include <cstring>
 #include "Error.h"
@@ -11,6 +20,7 @@ namespace sdds {
     };
 
     Error::Error(const char* msg){
+        clear();
         if (msg != nullptr and msg[0] != '\0'){
             error_message = new char [strlen(msg)+1];
             strcpy(error_message, msg);
@@ -28,6 +38,7 @@ namespace sdds {
     };
     Error& Error::operator=(Error& copyError){
         if (copyError.error_message != nullptr and copyError.error_message[0] != '\0'){
+            delete[] error_message;
             error_message = new char [strlen(copyError.error_message)+1];
             strcpy(error_message, copyError.error_message);
         }
@@ -53,10 +64,10 @@ namespace sdds {
             clear();
         } else {
             if (error_message != nullptr) {
-                delete[] error_message;
+                clear();
             }
             int len = strlen(msg);
-            error_message = new char[len + 1];
+            error_message = new char[len+1];
             strcpy(error_message, msg);
         }
         return *this;
