@@ -14,27 +14,26 @@
 
 using namespace std;
 
-namespace sdds {
+namespace sdds
+{
 
-    class PosIO {
-        char* error_message = nullptr;
+    class PosIO
+    {
 
     public:
-        PosIO();
         virtual ~PosIO();
-        virtual ostream& write() = 0;
-        virtual istream& read(istream& istr) = 0;
-        virtual ofstream& save(ofstream& ofstr) = 0;
-        virtual ifstream& load(ifstream& ifstr) = 0;
+        virtual void save(std::ofstream &ofstr) const = 0;
+        virtual void write(std::ostream &ostr) const = 0;
+        virtual void load(std::ifstream &ifstr) = 0;
+        virtual void read(std::istream &istr) = 0;
     };
 
-    ostream& operator<<(ostream& ostr, PosIO& right);
-    ofstream& operator<<(ofstream& ofstr, PosIO& right);
+    ostream &operator<<(ostream &ostr, PosIO &right);
+    ofstream &operator<<(ofstream &ofstr, PosIO &right);
 
-    istream& operator>>(istream& ifstr, PosIO& right);
-    ifstream& operator>>(ifstream& ifstr, PosIO& right);
+    istream &operator>>(istream &istr, PosIO &right);
+    ifstream &operator>>(ifstream &ifstr, PosIO &right);
 
 }
 
 #endif // !SDDS_POSIO_H_
-
