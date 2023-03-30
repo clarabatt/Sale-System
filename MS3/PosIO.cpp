@@ -15,6 +15,10 @@ using namespace std;
 
 namespace sdds
 {
+    PosIO::~PosIO() {
+
+    }
+
     ostream &operator<<(ostream &ostr, PosIO &right)
     {
         right.write(ostr);
