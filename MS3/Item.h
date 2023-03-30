@@ -13,16 +13,17 @@
 #include <iostream>
 #include "POS.h"
 #include "Error.h"
+#include "PosIO.h"
 
 using namespace std;
 
 namespace sdds
 {
 
-    class Item
+    class Item : public PosIO
     {
-        char m_sku[MAX_SKU_LEN] = {'/0'};
-        char *m_name[MAX_NAME_LEN];
+        char m_sku[MAX_SKU_LEN];
+        char *m_name;
         double m_price = 0.0;
         bool m_taxed = false;
         int m_quantity = 0;
@@ -37,26 +38,31 @@ namespace sdds
         Item &operator=(const Item &copyItem);
         virtual ~Item();
 
-        bool operator==(const char *sku) const;
+        bool operator==(const Item &I) const;
+        bool operator==(const char * str) const;
         bool operator>(const Item &I) const;
         int operator+=(int quantity);
         int operator-=(int quantity);
         operator bool() const;
 
-        Item &displayType() const;
+        Item &displayType(int type);
         double cost() const;
         int quantity() const;
         Item &clear();
 
-        virtual void write() = 0;
-        virtual void save() = 0;
-        virtual void read() = 0;
-        virtual void load() = 0;
-        virtual void billPrint() = 0;
+        ostream& write(ostream &ostr) const override;
+        ofstream& save(std::ofstream &ofstr) const override;
+        ifstream& load(std::ifstream &ifstr) override;
+        istream& read(std::istream &istr) override;
+
+        void setName(const char *newName);
+        ostream& bprint(ostream &ostr) const;
     };
 
     ostream &operator<<(ostream &ostr, const Item &Item);
     istream &operator>>(istream &istr, Item &Item);
+    ofstream &operator<<(ofstream &ofstr, const Item &Item);
+    ifstream &operator>>(ifstream &ifstr, Item &Item);
     double operator+=(double &d, const Item &Item);
 
 }
