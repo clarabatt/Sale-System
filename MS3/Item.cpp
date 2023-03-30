@@ -24,7 +24,15 @@ namespace sdds
     };
 
     void Item::setName(const char *newName){
-
+        if (newName != nullptr and *newName != '\0') {
+            if (m_name != nullptr) {
+                delete [] m_name;
+                m_name = nullptr;
+            }
+            int len = strlen(newName);
+            m_name = new char[len+1];
+            strcpy(m_name, newName);
+        }
     };
 
     Item &Item::operator=(const Item &other)
