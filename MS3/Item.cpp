@@ -64,7 +64,7 @@ namespace sdds
 
     bool Item::operator>(const Item &obj) const
     {
-        return strcmp(obj.m_name, m_name) > 0;
+        return strcmp(m_name, obj.m_name) > 0;
     };
 
     int Item::operator+=(int quantity)
@@ -179,7 +179,7 @@ namespace sdds
             if (m_error){
                 m_error.getMessage();
             } else {
-                ofstr << "T," << m_sku << "," << m_name << "," << m_price << "," << m_taxed << "," << m_quantity;
+                ofstr << "T," << m_sku << "," << m_name << "," << m_price << "," << m_taxed << "," << m_quantity << endl;
             }
         }
         return ofstr;
@@ -187,72 +187,64 @@ namespace sdds
 
     ifstream &Item::load(ifstream &ifstr)
     {
-        m_error.clear();
+        if (ifstr.is_open()) {
+            m_error.clear();
 
-        char sku[MAX_SKU_LEN + 1] = {'\0'};
-        char name[MAX_NAME_LEN + 1] = {'\0'};
-        double price;
-        bool taxed;
-        int quantity;
+            char sku[MAX_SKU_LEN + 1] = {'\0'};
+            char name[MAX_NAME_LEN + 1] = {'\0'};
+            double price;
+            bool taxed;
+            int quantity;
 
-        bool proceed = true;
+            bool proceed = true;
 
-        ifstr.getline(sku, strlen(sku), ',');
-        if (ifstr.fail() and sku[0] == '\0')
-        {
-            m_error = ERROR_POS_EMPTY;
-            proceed = false;
-        }
-        else if (strlen(sku) > MAX_SKU_LEN)
-        {
-            m_error = ERROR_POS_SKU;
-            proceed = false;
-        }
+            ifstr.getline(sku, strlen(sku), ',');
+            if (ifstr.fail() and sku[0] == '\0') {
+                m_error = ERROR_POS_EMPTY;
+                proceed = false;
+            } else if (strlen(sku) > MAX_SKU_LEN) {
+                m_error = ERROR_POS_SKU;
+                proceed = false;
+            }
 
-        ifstr.ignore();
-        ifstr.getline(name, strlen(name), ',');
-        if (ifstr.fail() and name[0] == '\0')
-        {
-            m_error = ERROR_POS_EMPTY;
-            proceed = false;
-        }
-        else if (strlen(name) > MAX_NAME_LEN)
-        {
-            m_error = ERROR_POS_NAME;
-            proceed = false;
-        }
+            ifstr.ignore();
+            ifstr.getline(name, strlen(name), ',');
+            if (ifstr.fail() and name[0] == '\0') {
+                m_error = ERROR_POS_EMPTY;
+                proceed = false;
+            } else if (strlen(name) > MAX_NAME_LEN) {
+                m_error = ERROR_POS_NAME;
+                proceed = false;
+            }
 
-        ifstr.ignore();
-        ifstr >> price;
-        if (ifstr.fail() and price == 0)
-        {
-            m_error = ERROR_POS_PRICE;
-            proceed = false;
-        }
+            ifstr.ignore();
+            ifstr >> price;
+            if (ifstr.fail() and price == 0) {
+                m_error = ERROR_POS_PRICE;
+                proceed = false;
+            }
 
-        ifstr.ignore();
-        ifstr >> taxed;
-        if (ifstr.fail())
-        {
-            m_error = ERROR_POS_TAX;
-            proceed = false;
-        }
+            ifstr.ignore();
+            ifstr >> taxed;
+            if (ifstr.fail()) {
+                m_error = ERROR_POS_TAX;
+                proceed = false;
+            }
 
-        ifstr.ignore();
-        ifstr >> quantity;
-        if (ifstr.fail() || quantity > MAX_NO_ITEMS || quantity < 0)
-        {
-            m_error = ERROR_POS_QTY;
-            proceed = false;
-        }
+            ifstr.ignore();
+            ifstr >> quantity;
+            if (ifstr.fail() || quantity > MAX_NO_ITEMS || quantity < 0) {
+                m_error = ERROR_POS_QTY;
+                proceed = false;
+            }
 
-        if (proceed)
-        {
-            strcpy(m_sku, sku);
-            setName(name);
-            m_price = price;
-            m_taxed = taxed;
-            m_quantity = quantity;
+            if (proceed) {
+                strcpy(m_sku, sku);
+                setName(name);
+                m_price = price;
+                m_taxed = taxed;
+                m_quantity = quantity;
+            }
         }
 
         return ifstr;
@@ -260,15 +252,15 @@ namespace sdds
 
     istream &Item::read(istream &istr)
     {
-        char sku[MAX_SKU_LEN + 1] = {'\0'};
-        char name[MAX_NAME_LEN + 1] = {'\0'};
+        char sku[MAX_SKU_LEN] = {'\0'};
+        char name[MAX_NAME_LEN] = {'\0'};
         double price;
         char taxed = '\0';
         int quantity;
 
         cout << "Sku" << endl
              << "> ";
-        istr >> sku;
+        istr.getline(sku, MAX_SKU_LEN);
         while (istr.fail() || strlen(sku) > MAX_SKU_LEN)
         {
             if (strlen(sku) > MAX_SKU_LEN)
@@ -279,8 +271,8 @@ namespace sdds
                  << "> ";
             istr.clear();
             istr.ignore(1000, '\n');
-            memset(sku, '\0', MAX_SKU_LEN + 1);
-            istr >> sku;
+            memset(sku, '\0', MAX_SKU_LEN);
+            istr.getline(sku, MAX_SKU_LEN);
         }
 
         cout << "Name" << endl
@@ -294,8 +286,8 @@ namespace sdds
                  << "> ";
             istr.clear();
             istr.ignore(1000, '\n');
-            memset(name, '\0', MAX_NAME_LEN + 1);
-            istr >> name;
+            memset(name, '\0', MAX_NAME_LEN);
+            istr.getline(name, MAX_NAME_LEN);
         }
 
         cout << "Price" << endl
