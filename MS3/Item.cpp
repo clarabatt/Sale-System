@@ -19,7 +19,7 @@ namespace sdds
 
     void Item::setName(const char *newName)
     {
-        if (newName != nullptr and *newName != '\0')
+        if (newName != nullptr && *newName != '\0')
         {
             if (m_name != nullptr)
             {
@@ -130,14 +130,14 @@ namespace sdds
         }
         else
         {
-            char *name = {};
+            char *name = new char[21]();
             if (m_name != nullptr)
             {
-                strncpy(name, m_name, 20);
+                strncpy(name, m_name, 21);
             }
             if (m_displayType == POS_LIST)
             {
-                ostr << setw(4) << left << m_sku << " |";
+                ostr << setw(7) << left << m_sku << " |";
                 ostr << setw(20) << left << name << " |";
                 ostr << setw(7) << right << fixed << setprecision(2) << m_price << " |";
                 ostr << (m_taxed ? " X |" : "   |");
@@ -175,7 +175,13 @@ namespace sdds
 
     ofstream &Item::save(ofstream &ofstr) const
     {
-
+        if (ofstr.is_open()) {
+            if (m_error){
+                m_error.getMessage();
+            } else {
+                ofstr << "T," << m_sku << "," << m_name << "," << m_price << "," << m_taxed << "," << m_quantity;
+            }
+        }
         return ofstr;
     }
 
@@ -183,8 +189,8 @@ namespace sdds
     {
         m_error.clear();
 
-        char *sku;
-        char *name;
+        char sku[MAX_SKU_LEN + 1] = {'\0'};
+        char name[MAX_NAME_LEN + 1] = {'\0'};
         double price;
         bool taxed;
         int quantity;
@@ -254,8 +260,8 @@ namespace sdds
 
     istream &Item::read(istream &istr)
     {
-        char sku[MAX_SKU_LEN + 1];
-        char name[MAX_NAME_LEN + 1] = {0};
+        char sku[MAX_SKU_LEN + 1] = {'\0'};
+        char name[MAX_NAME_LEN + 1] = {'\0'};
         double price;
         char taxed = '\0';
         int quantity;
@@ -273,6 +279,7 @@ namespace sdds
                  << "> ";
             istr.clear();
             istr.ignore(1000, '\n');
+            memset(sku, '\0', MAX_SKU_LEN + 1);
             istr >> sku;
         }
 
@@ -287,6 +294,7 @@ namespace sdds
                  << "> ";
             istr.clear();
             istr.ignore(1000, '\n');
+            memset(name, '\0', MAX_NAME_LEN + 1);
             istr >> name;
         }
 
@@ -326,17 +334,24 @@ namespace sdds
             istr >> quantity;
         }
 
+        istr.clear();
+        istr.ignore(1000, '\n');
+
         strcpy(m_sku, sku);
         setName(name);
         m_price = price;
         m_taxed = taxed == 'y';
         m_quantity = quantity;
 
+
         return istr;
     };
 
     ostream &Item::bprint(ostream &ostr) const
     {
+        ostr << "| " << setw(20) << left << (m_name != nullptr ? m_name : "") << " |";
+        ostr << setw(10) << right << fixed << setprecision(2) << (m_taxed ? m_price * (1 + TAX) : m_price) << " |";
+        ostr << " " << (m_taxed ? "T" : " ") << " |" << endl;
         return ostr;
     };
 
