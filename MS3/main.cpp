@@ -62,7 +62,7 @@ int main() {
       "11> 0\n"
       "12> " << MAX_STOCK_NUMBER + 1 << endl <<
       "13> 10\n";
-   T[cnt++] = getTool();
+//   T[cnt++] = getTool();
    M = T[0];
    for(i = 0; i < cnt; i++) {
       T[i].displayType(POS_LIST);

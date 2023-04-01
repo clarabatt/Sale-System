@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <cstdlib>
 #include "Item.h"
 
 using namespace std;
@@ -187,19 +188,22 @@ namespace sdds
 
     ifstream &Item::load(ifstream &ifstr)
     {
-        if (ifstr.is_open()) {
             m_error.clear();
 
             char sku[MAX_SKU_LEN + 1] = {'\0'};
             char name[MAX_NAME_LEN + 1] = {'\0'};
-            double price;
-            bool taxed;
-            int quantity;
+            char price[10] = {'\0'};
+            char taxed = '\0';
+            char quantity[10] = {'\0'};
+
+            double priceNum = 0;
+            bool taxedBool = false;
+            int qtyNum = 0;
 
             bool proceed = true;
 
-            ifstr.getline(sku, strlen(sku), ',');
-            if (ifstr.fail() and sku[0] == '\0') {
+            ifstr.getline(sku, MAX_SKU_LEN, ',');
+            if (ifstr.fail() || sku[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
                 proceed = false;
             } else if (strlen(sku) > MAX_SKU_LEN) {
@@ -207,9 +211,8 @@ namespace sdds
                 proceed = false;
             }
 
-            ifstr.ignore();
-            ifstr.getline(name, strlen(name), ',');
-            if (ifstr.fail() and name[0] == '\0') {
+            ifstr.getline(name, MAX_NAME_LEN, ',');
+            if (ifstr.fail() || name[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
                 proceed = false;
             } else if (strlen(name) > MAX_NAME_LEN) {
@@ -217,35 +220,50 @@ namespace sdds
                 proceed = false;
             }
 
-            ifstr.ignore();
-            ifstr >> price;
-            if (ifstr.fail() and price == 0) {
+            ifstr.getline(price, 10, ',');
+            if (ifstr.fail() || price[0] == '\0') {
                 m_error = ERROR_POS_PRICE;
                 proceed = false;
+            } else {
+                priceNum = atof(price);
+                if (priceNum < 0) {
+                    m_error = ERROR_POS_PRICE;
+                    proceed = false;
+                }
             }
 
-            ifstr.ignore();
-            ifstr >> taxed;
-            if (ifstr.fail()) {
+            ifstr.get(taxed);
+            if (ifstr.fail() || taxed == '\0') {
                 m_error = ERROR_POS_TAX;
                 proceed = false;
+            } else {
+                if (atoi(&taxed) != 0 && atoi(&taxed) != 1) {
+                    m_error = ERROR_POS_TAX;
+                    proceed = false;
+                } else {
+                    taxedBool = atoi(&taxed);
+                }
             }
 
-            ifstr.ignore();
-            ifstr >> quantity;
-            if (ifstr.fail() || quantity > MAX_NO_ITEMS || quantity < 0) {
+            ifstr.getline(quantity, 10, '\n');
+            if (ifstr.fail() || quantity[0] == '\0') {
                 m_error = ERROR_POS_QTY;
                 proceed = false;
+            } else {
+                qtyNum = atoi(quantity);
+                if (qtyNum < 0 || qtyNum > MAX_STOCK_NUMBER) {
+                    m_error = ERROR_POS_QTY;
+                    proceed = false;
+                }
             }
 
             if (proceed) {
                 strcpy(m_sku, sku);
                 setName(name);
-                m_price = price;
-                m_taxed = taxed;
-                m_quantity = quantity;
+                m_price = priceNum;
+                m_taxed = taxedBool;
+                m_quantity = qtyNum;
             }
-        }
 
         return ifstr;
     };
