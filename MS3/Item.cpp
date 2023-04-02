@@ -1,3 +1,11 @@
+// *****************************************************************************
+// Author  : Clara Verena Brito Battesini
+// Student ID(s)#: 143430213
+// Email        : cverena-brito-battes@senecacollege.ca
+// 02/04/2023
+//
+// I have done all the coding by myself and only copied the code that my professor provided to complete my workshops and assignments.
+// *****************************************************************************
 
 #include <iostream>
 #include <cstring>
@@ -267,6 +275,7 @@ namespace sdds
                 m_error = ERROR_POS_QTY;
                 if(!ifstr.eof())
                     ifstr.clear();
+                ifstr.putback('\n');
                 return ifstr;
             } else {
                 qtyNum = atoi(quantity);
@@ -274,6 +283,8 @@ namespace sdds
                     m_error = ERROR_POS_QTY;
                     if(!ifstr.eof())
                         ifstr.clear();
+                    ifstr.putback('\n');
+
                     return ifstr;
                 }
             }
