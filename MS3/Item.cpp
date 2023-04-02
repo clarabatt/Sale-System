@@ -139,7 +139,7 @@ namespace sdds
         }
         else
         {
-            char *name = new char[20]();
+            char *name = new char[21]();
             if (m_name != nullptr)
             {
                 strncpy(name, m_name, 20);
@@ -177,6 +177,7 @@ namespace sdds
                 }
                 ostr << "Stock Qty:   " << m_quantity << endl;
             }
+            delete [] name;
         }
         return ostr;
     };
@@ -392,7 +393,7 @@ namespace sdds
 
     ostream &Item::bprint(ostream &ostr) const
     {
-        char *name = new char[20]();
+        char *name = new char[21]();
         if (m_name != nullptr)
             strncpy(name, m_name, 20);
         else
@@ -400,6 +401,7 @@ namespace sdds
         ostr << "| " << setw(20) << left << name << "|";
         ostr << setw(10) << right << fixed << setprecision(2) << (m_taxed ? m_price * (1 + TAX) : m_price) << " |";
         ostr << "  " << (m_taxed ? "T" : " ") << "  |" << endl;
+        delete [] name;
         return ostr;
     };
 
