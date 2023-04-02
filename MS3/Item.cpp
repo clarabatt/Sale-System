@@ -140,9 +140,9 @@ namespace sdds
             {
                 ostr << setw(6) << left << m_sku << " |";
                 ostr << setw(20) << left << name << "|";
-                ostr << setw(7) << right << fixed << setprecision(2) << m_price << " |";
+                ostr << setw(7) << right << fixed << setprecision(2) << m_price << "|";
                 ostr << (m_taxed ? " X |" : "   |");
-                ostr << setw(4) << right << m_quantity << " |";
+                ostr << setw(4) << right << m_quantity << "|";
                 if (m_taxed)
                 {
                     ostr << setw(9) << right << fixed << setprecision(2) << m_price * (1 + TAX) * m_quantity;
@@ -200,7 +200,7 @@ namespace sdds
             int qtyNum = 0;
 
             ifstr.getline(sku, MAX_SKU_LEN, ',');
-            if (ifstr.fail() || sku[0] == '\0') {
+            if (ifstr.fail() && sku[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
                 if(!ifstr.eof())
                     ifstr.clear();
@@ -209,11 +209,13 @@ namespace sdds
             ifstr.seekg(-1, std::ios_base::cur);
             if (ifstr.get() != ',') {
                 m_error = ERROR_POS_SKU;
+                if(!ifstr.eof())
+                    ifstr.clear();
                 return ifstr;
             }
 
             ifstr.getline(name, MAX_NAME_LEN, ',');
-            if (ifstr.fail() || name[0] == '\0') {
+            if (ifstr.fail() && name[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
                 if(!ifstr.eof())
                     ifstr.clear();
@@ -222,6 +224,8 @@ namespace sdds
             ifstr.seekg(-1, std::ios_base::cur);
             if (ifstr.get() != ',') {
                 m_error = ERROR_POS_NAME;
+                if(!ifstr.eof())
+                    ifstr.clear();
                 return ifstr;
             }
 
@@ -232,11 +236,11 @@ namespace sdds
                     ifstr.clear();
                 return ifstr;
             } else {
-//            ifstr.seekg(-1, std::ios_base::cur);
-//            if (ifstr.get() != ',') {
                 priceNum = atof(price);
                 if (priceNum < 0) {
                     m_error = ERROR_POS_PRICE;
+                    if(!ifstr.eof())
+                        ifstr.clear();
                     return ifstr;
                 }
             }
@@ -248,10 +252,10 @@ namespace sdds
                     ifstr.clear();
                 return ifstr;
             } else {
-//            ifstr.seekg(-1, std::ios_base::cur);
-//            if (ifstr.get() != ',') {
                 if (atoi(taxed) != 0 && atoi(taxed) != 1) {
                     m_error = ERROR_POS_TAX;
+                    if(!ifstr.eof())
+                        ifstr.clear();
                     return ifstr;
                 } else {
                     taxedBool = atoi(taxed);
@@ -259,7 +263,7 @@ namespace sdds
             }
 
             ifstr.getline(quantity, ',');
-            if (ifstr.fail() || quantity[0] == '\0') {
+            if (ifstr.fail() && quantity[0] == '\0') {
                 m_error = ERROR_POS_QTY;
                 if(!ifstr.eof())
                     ifstr.clear();
@@ -268,6 +272,8 @@ namespace sdds
                 qtyNum = atoi(quantity);
                 if (qtyNum < 0 || qtyNum > MAX_STOCK_NUMBER) {
                     m_error = ERROR_POS_QTY;
+                    if(!ifstr.eof())
+                        ifstr.clear();
                     return ifstr;
                 }
             }
@@ -296,7 +302,8 @@ namespace sdds
         istr.getline(sku, MAX_SKU_LEN);
         while (istr.fail() || strlen(sku) > MAX_SKU_LEN)
         {
-            if (strlen(sku) > MAX_SKU_LEN)
+            istr.seekg(-1, std::ios_base::cur);
+            if (istr.get() != ',')
                 cout << ERROR_POS_SKU;
             else
                 cout << ERROR_POS_EMPTY;
@@ -337,7 +344,7 @@ namespace sdds
         }
 
         cout << "Taxed?" << endl
-             << "> ";
+             << "(Y)es/(N)o: ";
         istr >> taxed;
         while (istr.fail() || (taxed != 'y' && taxed != 'n'))
         {
