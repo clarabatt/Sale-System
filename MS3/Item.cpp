@@ -131,15 +131,15 @@ namespace sdds
         }
         else
         {
-            char *name = new char[21]();
+            char *name = new char[20]();
             if (m_name != nullptr)
             {
-                strncpy(name, m_name, 21);
+                strncpy(name, m_name, 20);
             }
             if (m_displayType == POS_LIST)
             {
-                ostr << setw(7) << left << m_sku << " |";
-                ostr << setw(20) << left << name << " |";
+                ostr << setw(6) << left << m_sku << " |";
+                ostr << setw(20) << left << name << "|";
                 ostr << setw(7) << right << fixed << setprecision(2) << m_price << " |";
                 ostr << (m_taxed ? " X |" : "   |");
                 ostr << setw(4) << right << m_quantity << " |";
@@ -151,7 +151,7 @@ namespace sdds
                 {
                     ostr << setw(9) << right << fixed << setprecision(2) << m_price * m_quantity;
                 }
-                ostr << "|" << endl;
+                ostr << "|";
             }
             else
             {
@@ -168,7 +168,6 @@ namespace sdds
                     ostr << "Price + tax: N/A" << endl;
                 }
                 ostr << "Stock Qty:   " << m_quantity << endl;
-                ostr << "=============v" << endl;
             }
         }
         return ostr;
@@ -180,7 +179,7 @@ namespace sdds
             if (m_error){
                 m_error.getMessage();
             } else {
-                ofstr << "T," << m_sku << "," << m_name << "," << m_price << "," << m_taxed << "," << m_quantity << endl;
+                ofstr << "T," << m_sku << "," << m_name << "," << fixed << setprecision(2) << m_price << "," << m_taxed << "," << m_quantity;
             }
         }
         return ofstr;
@@ -193,77 +192,93 @@ namespace sdds
             char sku[MAX_SKU_LEN + 1] = {'\0'};
             char name[MAX_NAME_LEN + 1] = {'\0'};
             char price[10] = {'\0'};
-            char taxed = '\0';
+            char taxed[2] = {'\0'};
             char quantity[10] = {'\0'};
 
             double priceNum = 0;
             bool taxedBool = false;
             int qtyNum = 0;
 
-            bool proceed = true;
-
             ifstr.getline(sku, MAX_SKU_LEN, ',');
             if (ifstr.fail() || sku[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
-                proceed = false;
-            } else if (strlen(sku) > MAX_SKU_LEN) {
+                if(!ifstr.eof())
+                    ifstr.clear();
+                return ifstr;
+            }
+            ifstr.seekg(-1, std::ios_base::cur);
+            if (ifstr.get() != ',') {
                 m_error = ERROR_POS_SKU;
-                proceed = false;
+                return ifstr;
             }
 
             ifstr.getline(name, MAX_NAME_LEN, ',');
             if (ifstr.fail() || name[0] == '\0') {
                 m_error = ERROR_POS_EMPTY;
-                proceed = false;
-            } else if (strlen(name) > MAX_NAME_LEN) {
+                if(!ifstr.eof())
+                    ifstr.clear();
+                return ifstr;
+            }
+            ifstr.seekg(-1, std::ios_base::cur);
+            if (ifstr.get() != ',') {
                 m_error = ERROR_POS_NAME;
-                proceed = false;
+                return ifstr;
             }
 
             ifstr.getline(price, 10, ',');
             if (ifstr.fail() || price[0] == '\0') {
                 m_error = ERROR_POS_PRICE;
-                proceed = false;
+                if(!ifstr.eof())
+                    ifstr.clear();
+                return ifstr;
             } else {
+//            ifstr.seekg(-1, std::ios_base::cur);
+//            if (ifstr.get() != ',') {
                 priceNum = atof(price);
                 if (priceNum < 0) {
                     m_error = ERROR_POS_PRICE;
-                    proceed = false;
+                    return ifstr;
                 }
             }
 
-            ifstr.get(taxed);
-            if (ifstr.fail() || taxed == '\0') {
+            ifstr.getline(taxed, 2, ',');
+            if (ifstr.fail() || taxed[0] == '\0') {
                 m_error = ERROR_POS_TAX;
-                proceed = false;
+                if(!ifstr.eof())
+                    ifstr.clear();
+                return ifstr;
             } else {
-                if (atoi(&taxed) != 0 && atoi(&taxed) != 1) {
+//            ifstr.seekg(-1, std::ios_base::cur);
+//            if (ifstr.get() != ',') {
+                if (atoi(taxed) != 0 && atoi(taxed) != 1) {
                     m_error = ERROR_POS_TAX;
-                    proceed = false;
+                    return ifstr;
                 } else {
-                    taxedBool = atoi(&taxed);
+                    taxedBool = atoi(taxed);
                 }
             }
 
-            ifstr.getline(quantity, 10, '\n');
+            ifstr.getline(quantity, ',');
             if (ifstr.fail() || quantity[0] == '\0') {
                 m_error = ERROR_POS_QTY;
-                proceed = false;
+                if(!ifstr.eof())
+                    ifstr.clear();
+                return ifstr;
             } else {
                 qtyNum = atoi(quantity);
                 if (qtyNum < 0 || qtyNum > MAX_STOCK_NUMBER) {
                     m_error = ERROR_POS_QTY;
-                    proceed = false;
+                    return ifstr;
                 }
             }
 
-            if (proceed) {
-                strcpy(m_sku, sku);
-                setName(name);
-                m_price = priceNum;
-                m_taxed = taxedBool;
-                m_quantity = qtyNum;
-            }
+            strcpy(m_sku, sku);
+            setName(name);
+            m_price = priceNum;
+            m_taxed = taxedBool;
+            m_quantity = qtyNum;
+
+            ifstr.putback('\n');
 
         return ifstr;
     };
@@ -295,7 +310,7 @@ namespace sdds
 
         cout << "Name" << endl
              << "> ";
-        istr.ignore();
+
         istr.getline(name, MAX_NAME_LEN);
         while (istr.fail() || strlen(name) > MAX_NAME_LEN)
         {
@@ -359,9 +374,14 @@ namespace sdds
 
     ostream &Item::bprint(ostream &ostr) const
     {
-        ostr << "| " << setw(20) << left << (m_name != nullptr ? m_name : "") << " |";
+        char *name = new char[20]();
+        if (m_name != nullptr)
+            strncpy(name, m_name, 20);
+        else
+            strncpy(name, "", 20);
+        ostr << "| " << setw(20) << left << name << "|";
         ostr << setw(10) << right << fixed << setprecision(2) << (m_taxed ? m_price * (1 + TAX) : m_price) << " |";
-        ostr << " " << (m_taxed ? "T" : " ") << " |" << endl;
+        ostr << "  " << (m_taxed ? "T" : " ") << "  |" << endl;
         return ostr;
     };
 
