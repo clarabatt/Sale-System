@@ -19,6 +19,7 @@ namespace sdds
                 ostr << "=============^" << endl;
             }
         }
+        ostr << left;
         return ostr;
     }
 }

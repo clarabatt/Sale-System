@@ -24,7 +24,7 @@ namespace sdds
             return istr;
         } else {
             Date new_date(2050, 10, 10);
-            cout << "Expiry date(YYYY/MM/DD)" << endl << "> ";
+            cout << "Expiry date (YYYY/MM/DD)" << endl << "> ";
             istr >> new_date;
 
             if (new_date){
@@ -48,10 +48,12 @@ namespace sdds
             }
             else{
                 ostr << "Expiry date: ";
+                ostr << right;
                 m_expireDate.display(ostr);
                 ostr << endl << "=============^" << endl;
             }
         }
+        ostr << left;
         return ostr;
     }
 
