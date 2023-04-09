@@ -12,13 +12,15 @@
 
 #include <iostream>
 #include "Error.h"
-#include "PosApp.h"
+#include "POS.h"
 
 using namespace std;
 
-namespace sdds {
+namespace sdds
+{
 
-    class Date {
+    class Date
+    {
         int m_year = 0, m_month = 0, m_day = 0, m_hour = 0, m_minute = 0;
         bool m_dateOnly = false;
         Error m_error;
@@ -28,31 +30,29 @@ namespace sdds {
         Date(int y, int m, int d);
         Date(int y, int m, int d, int h, int min = 0);
 
-        Date& dateOnly(bool value);
-        void display(ostream& ostr) const;
-        char* getErrorMessage() const;
+        Date &dateOnly(bool value);
+        void display(ostream &ostr) const;
+        char *getErrorMessage() const;
         void clearError();
-        const Error& error() const;
+        const Error &error() const;
 
-        bool operator==(const Date& right) const;
-        bool operator!=(const Date& right) const;
-        bool operator<(const Date& right) const;
-        bool operator>(const Date& right) const;
-        bool operator<=(const Date& right) const;
-        bool operator>=(const Date& right) const;
+        bool operator==(const Date &right) const;
+        bool operator!=(const Date &right) const;
+        bool operator<(const Date &right) const;
+        bool operator>(const Date &right) const;
+        bool operator<=(const Date &right) const;
+        bool operator>=(const Date &right) const;
 
         operator bool() const;
 
         void setDate(int y, int m, int d, bool val);
         void setTime(int h, int m, bool val);
-        void setError(const char * str);
-
+        void setError(const char *str);
     };
 
-    ostream& operator<<(ostream& ostr, Date& right);
-    istream& operator>>(istream& istr, Date& left);
+    ostream &operator<<(ostream &ostr, Date &right);
+    istream &operator>>(istream &istr, Date &left);
 
 }
 
 #endif // !SDDS_DATE_H_
-

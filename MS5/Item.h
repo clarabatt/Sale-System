@@ -11,7 +11,7 @@
 #define SDDS_ITEM_H_
 
 #include <iostream>
-#include "PosApp.h"
+#include "POS.h"
 #include "Error.h"
 #include "PosIO.h"
 
@@ -39,7 +39,7 @@ namespace sdds
         virtual ~Item();
 
         bool operator==(const Item &I) const;
-        bool operator==(const char * str) const;
+        bool operator==(const char *str) const;
         bool operator>(const Item &I) const;
         int operator+=(int quantity);
         int operator-=(int quantity);
@@ -50,14 +50,15 @@ namespace sdds
         double cost() const;
         int quantity() const;
         Item &clear();
+        char *getName() const;
 
-        ostream& write(ostream &ostr) const override;
-        ofstream& save(std::ofstream &ofstr) const override;
-        ifstream& load(std::ifstream &ifstr) override;
-        istream& read(std::istream &istr) override;
+        ostream &write(ostream &ostr) const override;
+        ofstream &save(std::ofstream &ofstr) const override;
+        ifstream &load(std::ifstream &ifstr) override;
+        istream &read(std::istream &istr) override;
 
         void setName(const char *newName);
-        ostream& bprint(ostream &ostr) const;
+        ostream &bprint(ostream &ostr) const;
     };
 
     ostream &operator<<(ostream &ostr, const Item &Item);

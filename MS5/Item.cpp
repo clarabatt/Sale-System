@@ -14,7 +14,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include "Item.h"
-#include "PosApp.h"
+#include "POS.h"
 
 using namespace std;
 
@@ -27,22 +27,27 @@ namespace sdds
         *this = obj;
     };
 
+    char *Item::getName() const
+    {
+        return m_name;
+    };
+
     void Item::setName(const char *newName)
     {
+        delete[] m_name;
+        m_name = nullptr;
+
         if (newName != nullptr && *newName != '\0')
         {
-            if (m_name != nullptr)
-            {
-                delete[] m_name;
-                m_name = nullptr;
-            }
             int len = strlen(newName);
             m_name = new char[len + 1];
             strcpy(m_name, newName);
+
         }
     };
 
-    char Item::itemType() const {
+    char Item::itemType() const
+    {
         return m_displayType;
     };
 
@@ -182,17 +187,21 @@ namespace sdds
                 }
                 ostr << "Stock Qty:   " << m_quantity << endl;
             }
-            delete [] name;
+            delete[] name;
         }
         return ostr;
     };
 
     ofstream &Item::save(ofstream &ofstr) const
     {
-        if (ofstr.is_open()) {
-            if (m_error){
+        if (ofstr.is_open())
+        {
+            if (m_error)
+            {
                 m_error.getMessage();
-            } else {
+            }
+            else
+            {
                 ofstr << itemType() << "," << m_sku << "," << m_name << "," << fixed << setprecision(2) << m_price << "," << m_taxed << "," << m_quantity;
             }
         }
@@ -201,107 +210,125 @@ namespace sdds
 
     ifstream &Item::load(ifstream &ifstr)
     {
-            m_error.clear();
+        m_error.clear();
 
-            char sku[MAX_SKU_LEN + 1] = {'\0'};
-            char name[MAX_NAME_LEN + 1] = {'\0'};
-            char price[10] = {'\0'};
-            char taxed[2] = {'\0'};
-            char quantity[10] = {'\0'};
+        char sku[MAX_SKU_LEN + 1] = {'\0'};
+        char name[MAX_NAME_LEN + 1] = {'\0'};
+        char price[10] = {'\0'};
+        char taxed[2] = {'\0'};
+        char quantity[10] = {'\0'};
 
-            double priceNum = 0;
-            bool taxedBool = false;
-            int qtyNum = 0;
+        double priceNum = 0;
+        bool taxedBool = false;
+        int qtyNum = 0;
 
-            ifstr.getline(sku, MAX_SKU_LEN, ',');
-            if (ifstr.fail() && sku[0] == '\0') {
-                m_error = ERROR_POS_EMPTY;
-                if(!ifstr.eof())
-                    ifstr.clear();
-                return ifstr;
-            }
-            ifstr.seekg(-1, std::ios_base::cur);
-            if (ifstr.get() != ',') {
-                m_error = ERROR_POS_SKU;
-                if(!ifstr.eof())
-                    ifstr.clear();
-                return ifstr;
-            }
+        ifstr.getline(sku, MAX_SKU_LEN, ',');
+        if (ifstr.fail() && sku[0] == '\0')
+        {
+            m_error = ERROR_POS_EMPTY;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
+        ifstr.seekg(-1, std::ios_base::cur);
+        if (ifstr.get() != ',')
+        {
+            m_error = ERROR_POS_SKU;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
 
-            ifstr.getline(name, MAX_NAME_LEN, ',');
-            if (ifstr.fail() && name[0] == '\0') {
-                m_error = ERROR_POS_EMPTY;
-                if(!ifstr.eof())
-                    ifstr.clear();
-                return ifstr;
-            }
-            ifstr.seekg(-1, std::ios_base::cur);
-            if (ifstr.get() != ',') {
-                m_error = ERROR_POS_NAME;
-                if(!ifstr.eof())
-                    ifstr.clear();
-                return ifstr;
-            }
+        ifstr.getline(name, MAX_NAME_LEN, ',');
+        if (ifstr.fail() && name[0] == '\0')
+        {
+            m_error = ERROR_POS_EMPTY;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
+        ifstr.seekg(-1, std::ios_base::cur);
+        if (ifstr.get() != ',')
+        {
+            m_error = ERROR_POS_NAME;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
 
-            ifstr.getline(price, 10, ',');
-            if (ifstr.fail() || price[0] == '\0') {
+        ifstr.getline(price, 10, ',');
+        if (ifstr.fail() || price[0] == '\0')
+        {
+            m_error = ERROR_POS_PRICE;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
+        else
+        {
+            priceNum = atof(price);
+            if (priceNum < 0)
+            {
                 m_error = ERROR_POS_PRICE;
-                if(!ifstr.eof())
+                if (!ifstr.eof())
                     ifstr.clear();
                 return ifstr;
-            } else {
-                priceNum = atof(price);
-                if (priceNum < 0) {
-                    m_error = ERROR_POS_PRICE;
-                    if(!ifstr.eof())
-                        ifstr.clear();
-                    return ifstr;
-                }
             }
+        }
 
-            ifstr.getline(taxed, 2, ',');
-            if (ifstr.fail() || taxed[0] == '\0') {
+        ifstr.getline(taxed, 2, ',');
+        if (ifstr.fail() || taxed[0] == '\0')
+        {
+            m_error = ERROR_POS_TAX;
+            if (!ifstr.eof())
+                ifstr.clear();
+            return ifstr;
+        }
+        else
+        {
+            if (atoi(taxed) != 0 && atoi(taxed) != 1)
+            {
                 m_error = ERROR_POS_TAX;
-                if(!ifstr.eof())
+                if (!ifstr.eof())
                     ifstr.clear();
                 return ifstr;
-            } else {
-                if (atoi(taxed) != 0 && atoi(taxed) != 1) {
-                    m_error = ERROR_POS_TAX;
-                    if(!ifstr.eof())
-                        ifstr.clear();
-                    return ifstr;
-                } else {
-                    taxedBool = atoi(taxed);
-                }
             }
+            else
+            {
+                taxedBool = atoi(taxed);
+            }
+        }
 
-            ifstr.getline(quantity, ',');
-            if (ifstr.fail() && quantity[0] == '\0') {
+        ifstr.getline(quantity, ',');
+        if (ifstr.fail() && quantity[0] == '\0')
+        {
+            m_error = ERROR_POS_QTY;
+            if (!ifstr.eof())
+                ifstr.clear();
+            ifstr.putback('\n');
+            return ifstr;
+        }
+        else
+        {
+            qtyNum = atoi(quantity);
+            if (qtyNum < 0 || qtyNum > MAX_STOCK_NUMBER)
+            {
                 m_error = ERROR_POS_QTY;
-                if(!ifstr.eof())
+                if (!ifstr.eof())
                     ifstr.clear();
                 ifstr.putback('\n');
+
                 return ifstr;
-            } else {
-                qtyNum = atoi(quantity);
-                if (qtyNum < 0 || qtyNum > MAX_STOCK_NUMBER) {
-                    m_error = ERROR_POS_QTY;
-                    if(!ifstr.eof())
-                        ifstr.clear();
-                    ifstr.putback('\n');
-
-                    return ifstr;
-                }
             }
+        }
 
-            strcpy(m_sku, sku);
-            setName(name);
-            m_price = priceNum;
-            m_taxed = taxedBool;
-            m_quantity = qtyNum;
+        strcpy(m_sku, sku);
+        setName(name);
+        m_price = priceNum;
+        m_taxed = taxedBool;
+        m_quantity = qtyNum;
 
-            ifstr.putback('\n');
+        ifstr.putback('\n');
 
         return ifstr;
     };
@@ -392,7 +419,6 @@ namespace sdds
         m_taxed = taxed == 'y';
         m_quantity = quantity;
 
-
         return istr;
     };
 
@@ -406,7 +432,7 @@ namespace sdds
         ostr << "| " << setw(20) << left << name << "|";
         ostr << setw(10) << right << fixed << setprecision(2) << (m_taxed ? m_price * (1 + TAX) : m_price) << " |";
         ostr << "  " << (m_taxed ? "T" : " ") << "  |" << endl;
-        delete [] name;
+        delete[] name;
         return ostr;
     };
 
