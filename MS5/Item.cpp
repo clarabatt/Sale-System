@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include "Item.h"
+#include "PosApp.h"
 
 using namespace std;
 

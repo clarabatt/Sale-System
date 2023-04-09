@@ -11,7 +11,7 @@
 #define SDDS_ITEM_H_
 
 #include <iostream>
-#include "POS.h"
+#include "PosApp.h"
 #include "Error.h"
 #include "PosIO.h"
 
