@@ -10,12 +10,39 @@
 #ifndef SDDS_POSAPP_H_
 #define SDDS_POSAPP_H_
 
-const int MAX_LEN_FILENAME = 255;
+//#include "Item.h"
 
 namespace sdds {
 
+    class Item;
+
+    const int MAX_LEN_FILENAME = 255;
+    const double TAX = 0.13;
+    const int MAX_SKU_LEN = 7;
+
+    const int MIN_YEAR = 2000;
+    const int MAX_YEAR = 2030;
+
+    const int MAX_STOCK_NUMBER = 99;
+    const int MAX_NO_ITEMS = 200;
+
+    const int MAX_NAME_LEN = 40;
+
+    const int POS_LIST = 1;
+    const int POS_FORM = 2;
+
+    const char *const ERROR_POS_SKU = "SKU too long";
+    const char *const ERROR_POS_NAME = "Item name too long";
+    const char *const ERROR_POS_PRICE = "Invalid price value";
+    const char *const ERROR_POS_TAX = "Invalid tax status";
+    const char *const ERROR_POS_QTY = "Invalid quantity value";
+    const char *const ERROR_POS_STOCK = "Item out of stock";
+    const char *const ERROR_POS_EMPTY = "Invalid Empty Item";
+
     class PosApp {
         char filename[MAX_LEN_FILENAME];
+        Item* Iptr[MAX_NO_ITEMS] = {nullptr};
+        int nptr = 0;
 
     public:
         // IMPLEMENTED
@@ -32,9 +59,11 @@ namespace sdds {
         void removeItem();
         void stockItem();
         void listItems();
+        void clearItems();
         void POS();
         void saveRecs();
         void loadRecs();
+        void actionTitle(const char* title) const;
 
     };
 

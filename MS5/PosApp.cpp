@@ -9,9 +9,12 @@
 
 #include "PosApp.h"
 #include "Utils.h"
+#include "Perishable.h"
+#include "NonPerishable.h"
 #include "iostream"
 #include "iomanip"
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -103,8 +106,45 @@ namespace sdds {
         cout << "Saving data in datafile.csv\n"
                 "Goodbye!" << endl;
     };
-    void PosApp::loadRecs(){
-        cout << ">>>> " << setw(71) << setfill('.') << left << "Loading Items" << "." << endl;
-        cout << "Loading data from datafile.csv" << endl;
+
+    void PosApp::clearItems() {
+        if (nptr != 0) {
+            for (int i = 0; i <= nptr; i++) {
+                if (Iptr[i] != nullptr) {
+                    delete[] Iptr[i];
+                    Iptr[i] = nullptr;
+                }
+            }
+            nptr = 0;
+        }
     };
+
+    void PosApp::loadRecs(){
+        actionTitle("Loading Items");
+        ifstream input(filename);
+        if (input.fail()){
+            ofstream output(filename);
+            output.close();
+            return;
+        } else {
+            clearItems();
+                char type;
+                input.get(type);
+                Item* item = nullptr;
+                if (type == 'P')
+                    item = new Perishable();
+                else if (type == 'N')
+                    item = new NonPerishable();
+
+                    input.ignore();
+                    item->load(input);
+                    Iptr[nptr] = item;
+                    nptr++;
+        }
+    };
+
+    void PosApp::actionTitle(const char* title) const {
+        cout << ">>>> " << left << setw(73) << setfill('.') << title << endl;
+    }
+
 }
