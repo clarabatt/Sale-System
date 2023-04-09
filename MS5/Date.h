@@ -12,7 +12,7 @@
 
 #include <iostream>
 #include "Error.h"
-#include "POS.h"
+#include "PosApp.h"
 
 using namespace std;
 
