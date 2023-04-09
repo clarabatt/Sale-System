@@ -9,7 +9,7 @@
 					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.25"
+						"string" : "3.24"
 					},
 					"projectIndex" : 0,
 					"source" : ".",
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "MS5::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-MS5-Debug-3a4851b782e98b687c54.json",
+					"jsonFile" : "target-MS5-Debug-816731ada71191303763.json",
 					"name" : "MS5",
 					"projectIndex" : 0
 				}
