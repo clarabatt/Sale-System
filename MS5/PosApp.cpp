@@ -205,7 +205,30 @@ namespace sdds
              << endl;
     }
 
-    void PosApp::listItems()
+    int PosApp::selectItem()
+    {
+        actionTitle("Item Selection by row number");
+        cout << "Press <ENTER> to start....";
+        cin.get();
+        listItems(false);
+        int num;
+        bool done = true;
+
+        while(done){
+            cout << "Enter the row number:";
+            cin >> num;
+
+            if (cin.fail())
+                cout << "Invalid Integer, try again: ";
+            else if (num < 1 or num > 5)
+                cout << "[0<=value<=5], retry: > ";
+            else {
+                return num;
+            }
+        }
+    };
+
+    void PosApp::listItems(bool printTotal)
     {
         actionTitle("Listing Items");
         double sum = 0;
@@ -247,7 +270,8 @@ namespace sdds
             sum += Iptr[i]->cost() * Iptr[i]->quantity();
         }
 
-        footer(sum);
+        if (printTotal)
+            footer(sum);
     };
 
     void PosApp::saveRecs()

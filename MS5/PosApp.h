@@ -34,10 +34,11 @@ namespace sdds
         PosApp(const PosApp &) = delete;
         PosApp &operator=(const PosApp &) = delete;
 
+        int selectItem();
         void addItem();
         void removeItem();
         void stockItem();
-        void listItems();
+        void listItems(bool printTotal = true);
         void clearItems();
         void POS();
         void saveRecs();
