@@ -153,10 +153,22 @@ namespace sdds
     };
     void PosApp::removeItem()
     {
-        cout << ">>>> " << setw(71) << setfill('.') << left << "Remove Item"
-             << "." << endl;
-        cout << "Running"
-             << " removeItem()" << endl;
+        actionTitle("Remove Item");
+        int selec = selectItem() - 1;
+        cout << "Removing...." << endl;
+        Iptr[selec]->displayType(POS_FORM);
+        Iptr[selec]->write(cout);
+
+        delete Iptr[selec];
+        Iptr[selec] = nullptr;
+
+        for (int i = selec+1; i < nptr; i++)
+        {
+            Iptr[i-1] = Iptr[i];
+        }
+        nptr--;
+        actionTitle("DONE!");
+
     };
     void PosApp::stockItem()
     {
@@ -197,8 +209,6 @@ namespace sdds
 
     void footer(double amount)
     {
-        cout << endl
-             << "-----^--------^--------------------^-------^---^----^---------^-------------^" << endl;
         cout << setw(47) << setfill(' ') << right << "Total Asset: $  "
              << "|" << right << setw(14) << setprecision(2) << fixed << setfill(' ') << amount << "|" << endl;
         cout << "-----------------------------------------------^--------------^" << endl
@@ -214,18 +224,21 @@ namespace sdds
         int num;
         bool done = true;
 
+        cout << "Enter the row number: ";
         while(done){
-            cout << "Enter the row number:";
             cin >> num;
-
-            if (cin.fail())
+            if (cin.fail()) {
                 cout << "Invalid Integer, try again: ";
-            else if (num < 1 or num > 5)
-                cout << "[0<=value<=5], retry: > ";
-            else {
-                return num;
+                cin.clear();
+                cin.ignore(2000, '\n');
+            } else if (num < 1 or num > 5) {
+                cout << "[1<=value<=" << nptr << "], retry: ";
+                cout << "Enter the row number: ";
+            } else {
+                done = false;
             }
         }
+        return num;
     };
 
     void PosApp::listItems(bool printTotal)
@@ -269,6 +282,9 @@ namespace sdds
                 cout << endl;
             sum += Iptr[i]->cost() * Iptr[i]->quantity();
         }
+
+        cout << endl
+             << "-----^--------^--------------------^-------^---^----^---------^-------------^" << endl;
 
         if (printTotal)
             footer(sum);
