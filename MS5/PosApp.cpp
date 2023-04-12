@@ -2,7 +2,7 @@
 // Author  : Clara Verena Brito Battesini
 // Student ID(s)#: 143430213
 // Email        : cverena-brito-battes@senecacollege.ca
-// 09/04/2023
+// 11/04/2023
 //
 // I have done all the coding by myself and only copied the code that my professor provided to complete my workshops and assignments.
 // *****************************************************************************
@@ -128,10 +128,28 @@ namespace sdds
 
     void PosApp::addItem()
     {
-        cout << ">>>> " << setw(71) << setfill('.') << left << "Adding Item to the store"
-             << "." << endl;
-        cout << "Running"
-             << " addItem()" << endl;
+        actionTitle("Adding Item to the store");
+        if (nptr >= MAX_NO_ITEMS) {
+            cout << "Inventory Full!";
+            return;
+        }
+        Item* temp;
+        char type;
+        cout << "Is the Item perishable? (Y)es/(N)o: ";
+        cin >> type;
+        if (type == 'y')
+            temp = new Perishable();
+        else
+            temp = new NonPerishable();
+        cin.ignore();
+        while(!temp->read(cin)){
+            cin.clear();
+            flushkeys();
+            cout << ", try again...\n";
+        }
+        Iptr[nptr] = temp;
+        nptr++;
+        actionTitle("DONE!");
     };
     void PosApp::removeItem()
     {
@@ -292,7 +310,7 @@ namespace sdds
 
     void PosApp::actionTitle(const char *title) const
     {
-        cout << ">>>> " << left << setw(72) << setfill('.') << title << endl;
+            cout << ">>>> " << left << setw(72) << setfill('.') << title << endl;
     }
 
 }
