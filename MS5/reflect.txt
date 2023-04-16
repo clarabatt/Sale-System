@@ -1,0 +1,62 @@
+// *****************************************************************************
+// Author  : Clara Verena Brito Battesini
+// Student ID(s)#: 143430213
+// Email        : cverena-brito-battes@senecacollege.ca
+// 16/04/2023
+//
+// I have done all the coding by myself and only copied the code that my professor provided to complete my workshops and assignments.
+// *****************************************************************************
+
+This Project intents to be a system of items management that could be used by any business which works selling
+or storing non perishable and perishable items. The list of features are:
+- Import a list of items from a csv file;
+- See the list of items in the system;
+- Add an item in the catalog using the system;
+- Remove an item from the catalog using the system;
+- Increase or decrease the stock of an item using the system;
+- Export the list after the changes for a csv file
+
+The system is composed by Many Modules:
+
+1. Error
+    That module is present in all the other structures on this project. Because we use it for define if
+    the object is in a good state, if not it will have an error message inside it.
+
+2. Date
+    This module responsibility is to create a date structure that will be used for Perishable items.
+    The date is composed by integer numbers and could be with or without time.
+    The operators overloaded in this class allows the programmer to increase efficiency when programming
+    on the other system's part. With them we could compare dates and also get the date from a cin or cout
+    directly for the object.
+
+3. PosIO
+    PosIO is an abstract class that will enforce methods of save, write, load and read for the derived
+    ones, and the only implementation here is using those methods inside the operators overloading >> and <<
+    for files or using the prompt.
+
+4. Item
+    Item is a class derived from PosIO and that is also an abstract class because it has at least one pure
+    virtual function. After it will be used to a base for Perishable and NonPerishable classes.
+    That is the core structure on the system. For this implementation we had to override operators
+    and also methods to access the private data members.
+
+5. Perishable and NonPerishable
+    Practically the same implementation, based on an Item, but Perishable has a date as a data member and
+    that makes it has more methods.
+
+6. PosApp
+    The menu that will control the system it implements and request all the actions from the user.
+
+Challenges:
+
+The part that I had more difficult was on the ifstream function for the Item class. That was because for some
+reason the cin was getting the /n and the loop was not passing for the next line, I passed days until understand
+what was happening and figure out with a not elegant feature, using putback cin function to putback the "/n"
+for the end of line. But it worked.
+The problem here was that I had to pay more attention for the following implementations to check if it was
+working properly.
+
+The other parts were not difficult to implement following the instructions provided, but took some time.
+
+I changed the implementation of the search method to return the index of the item instead of the reference.
+Will be easier for me to store the index than the reference.

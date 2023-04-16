@@ -49,6 +49,7 @@ namespace sdds
         Item &displayType(int type);
         double cost() const;
         int quantity() const;
+        int sku() const;
         Item &clear();
         char *getName() const;
 

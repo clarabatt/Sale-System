@@ -9,6 +9,7 @@
 
 #include "PosApp.h"
 #include "Utils.h"
+#include "Date.h"
 #include "Perishable.h"
 #include "NonPerishable.h"
 #include "iostream"
@@ -193,7 +194,7 @@ namespace sdds
                 cout << "[1<=value<=" << maxItems << "], retry: ";
                 cout << "Enter quantity to add: ";
             } else {
-                Iptr[row-1] += num;
+                Iptr[row-1]->operator+=(num);
                 done = false;
             }
         }
@@ -201,11 +202,72 @@ namespace sdds
     };
     void PosApp::POS()
     {
-        cout << ">>>> " << setw(71) << setfill('.') << left << "Starting Point of Sale"
-             << "." << endl;
-        cout << "Running"
-             << " POS()" << endl;
+        actionTitle("Starting Point of Sale");
+
+        bool done = true;
+        char num[MAX_SKU_LEN +1];
+        int countBill = 0;
+        double sumtotal = 0;
+        int* indexList = new int [nptr];
+
+        while(done) {
+            cout << "Enter SKU or <ENTER> only to end sale...\n" << "> ";
+            cin.getline(num, MAX_SKU_LEN + 1);
+            if (strlen(num) == 0) {
+                done = false;
+                break;
+            }
+
+            if (cin.fail()) {
+                cout << "SKU too long";
+                cin.clear();
+                cin.ignore(2000, '\n');
+            } else {
+                int index = search(stoi(num));
+                if (index >= 0 && Iptr[index]->quantity() <= 0) {
+                    cout << "Item out of stock" << endl;
+                }
+                else if (index >= 0 && Iptr[index]->quantity() > 0) {
+                    Iptr[index]->operator-=(1);
+                    Iptr[index]->displayType(POS_FORM);
+                    Iptr[index]->write(cout);
+                    indexList[countBill] = index;
+                    countBill++;
+                    sumtotal += Iptr[index]->cost();
+                    cout << endl << ">>>>> Added to bill" << endl;
+                    cout << ">>>>> Total: " << fixed << setprecision(2) << sumtotal << endl;
+                }
+            }
+        }
+
+        Date dateNow;
+        dateNow.dateOnly(false);
+
+        cout << "v---------------------------------------v" << endl;
+        cout << "| ";
+        dateNow.display(cout);
+        cout << "                     |" << endl;
+        cout << "+---------------------v-----------v-----+" << endl;
+        cout << "| Item                |     Price | Tax +" << endl;
+        cout << "+---------------------v-----------v-----+" << endl;
+        for (int i = 0; i < countBill; i++) {
+            Iptr[indexList[i]]->bprint(cout);
+        }
+        cout << "+---------------------^-----------^-----+" << endl;
+        cout << "| total: " << setw(24) << fixed << setprecision(2) << sumtotal << " |" << endl;
+        cout << "^---------------------------------^" << endl;
+
+        delete [] indexList;
     };
+
+    int PosApp::search(int sku) const{
+        for (int i = 0; i < nptr; i++) {
+            if (Iptr[i]->sku() == sku)
+                return i;
+            }
+        cout << "!!!!! Item Not Found !!!!!" << endl;
+        return -1;
+    }
 
     void titleHeader()
     {

@@ -88,6 +88,7 @@ namespace sdds
 
     int Item::operator+=(int quantity)
     {
+        cout << "hey 1";
         int sum = m_quantity + quantity;
         if (sum > MAX_STOCK_NUMBER)
         {
@@ -115,6 +116,7 @@ namespace sdds
 
     double operator+=(double &num, const Item &obj)
     {
+        cout << "hey 2";
         double sum = num + obj.cost() * obj.quantity();
         return num = sum;
     };
@@ -133,6 +135,11 @@ namespace sdds
     int Item::quantity() const
     {
         return m_quantity;
+    };
+
+    int Item::sku() const
+    {
+        return stoi(m_sku);
     };
 
     Item &Item::clear()
@@ -179,7 +186,7 @@ namespace sdds
                 ostr << "Price:       " << m_price << endl;
                 if (m_taxed)
                 {
-                    ostr << "Price + tax: " << m_price * (1 + TAX) << endl;
+                    ostr << "Price + tax: " << fixed << setprecision(2) << m_price * (1 + TAX) << endl;
                 }
                 else
                 {

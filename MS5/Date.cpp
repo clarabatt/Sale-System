@@ -98,7 +98,7 @@ namespace sdds {
     };
 
     void Date::display(ostream& ostr) const{
-        ostr << m_year << "/" << setw(2) << setfill('0')
+        ostr << m_year << "/" << setw(2) << setfill('0') << right
         << m_month << "/" << setw(2) << setfill('0') << m_day;
         if (!m_dateOnly)
             ostr << ", " << setw(2) << setfill('0') << m_hour << ":" << setw(2) << setfill('0') << m_minute;

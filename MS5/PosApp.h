@@ -41,6 +41,7 @@ namespace sdds
         void listItems(bool printTotal = true);
         void clearItems();
         void POS();
+        int search(int sku) const;
         void saveRecs();
         void loadRecs();
         void actionTitle(const char *title) const;
