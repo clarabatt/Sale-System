@@ -172,10 +172,32 @@ namespace sdds
     };
     void PosApp::stockItem()
     {
-        cout << ">>>> " << setw(71) << setfill('.') << left << "Select an item to stock"
-             << "." << endl;
-        cout << "Running"
-             << " stockItem()" << endl;
+        actionTitle("Select an item to stock");
+        int row = selectItem();
+        cout << "Selected Item:\n";
+        Iptr[row-1]->displayType(POS_FORM);
+        Iptr[row-1]->write(cout);
+
+        bool done = true;
+        int num = 0;
+        int maxItems = MAX_STOCK_NUMBER - Iptr[row-1]->quantity();
+
+        cout << "Enter quantity to add: ";
+        while(done){
+            cin >> num;
+            if (cin.fail()) {
+                cout << "Invalid Integer, try again: ";
+                cin.clear();
+                cin.ignore(2000, '\n');
+            } else if (num < 1 or num > maxItems) {
+                cout << "[1<=value<=" << maxItems << "], retry: ";
+                cout << "Enter quantity to add: ";
+            } else {
+                Iptr[row-1] += num;
+                done = false;
+            }
+        }
+        actionTitle("DONE!");
     };
     void PosApp::POS()
     {
