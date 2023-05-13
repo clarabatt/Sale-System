@@ -73,3 +73,7 @@ _deps
 *-prefix/
 
 .idea
+cmake-build-debug
+exec.dSYM
+posdata.csv
+.vscode
